@@ -14,9 +14,13 @@
 ##为什么要学？
 * 已经渐渐成为基本技能
 * 流行。合作伙伴使用Git，我们完全不懂，无法有效协同工作
-* 对自己的文档（不仅代码）进行跟踪的确非常方便
+* 对自己的文档（不仅代码）进行跟踪的确非常方便  
 
-##基本流程
+##基本概念
+本地三棵树：工作目录，暂存区（stage），本地仓库
+HEAD：相当于一个指针，默认指向最后一次的commit
+
+##基本操作
 ###初次使用Config
 设置commit的用户名  
 
@@ -51,6 +55,9 @@ unstage文件，但保留更改
 提交到版本库(把snapshot存入版本库)  
 
 	$ git commit -m "[descriptive message]"
+###分支、合并等
+`git pull`相当于`git fetch`+`git merge`，获取远程修改并merge到本地  
+`git rebase`则是先撤销本地commit，重新将远程分支版本同步到本地，然后把本地分支撤销的commit作为patch打入新同步的版本。[这里](http://gitbook.liuhui998.com/4_2.html)图文并茂，比较容易理解。不过最好要自己试试
 ###查看历史记录
 列出当前分支的版本历史  
 
@@ -60,6 +67,10 @@ unstage文件，但保留更改
 
 	$ git push [alias] [branch]
 
+##工作流程
+工作流程有不少，参考这篇[Git版本控制与工作流](http://www.jianshu.com/p/67afe711c731)  
+目前比较适合我们自己公司的是[Gitflow Workflow](https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow)
 ##学习Tips 
-年龄大了记性不好，入门的时候打印一张[Cheatsheet](http://www.cheat-sheets.org/saved-copy/git-cheat-sheet.pdf)比较实用  
-或者直接git -help
+* Git上手不算难，看看文档就能进行自己的首次更改和提交。但玩转整个工作流程，特别是多人协作，还是坑不少，感觉比较深的是达成同一目的的命令会有多种，看似相似的功能也不少，必须了解每个操作背后的原理才能玩转。所以一开始要自己做好代码备份，万一误操作。。。  
+* 年龄大了记性不好，入门的时候打印一张[Cheatsheet](http://www.cheat-sheets.org/saved-copy/git-cheat-sheet.pdf)比较实用  
+或者直接git -help（不过help里的有些说明比较晦涩）
