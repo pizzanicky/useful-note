@@ -56,6 +56,14 @@ unstage文件，但保留更改
 
 	$ git commit -m "[descriptive message]"
 ###分支、合并等
+默认在master分支  
+创建分支branchA并把工作目录切换到此分支  
+`git checkout -b branchA`  
+切换回master分支  
+`git checkout master`  
+push到远程仓库  
+`git push origin branchA`  
+
 `git pull`相当于`git fetch`+`git merge`，获取远程修改并merge到本地  
 `git rebase`则是先撤销本地commit，重新将远程分支版本同步到本地，然后把本地分支撤销的commit作为patch打入新同步的版本。[这里](http://gitbook.liuhui998.com/4_2.html)图文并茂，比较容易理解。不过最好要自己试试
 ###查看历史记录
