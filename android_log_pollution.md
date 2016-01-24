@@ -65,3 +65,29 @@ Android设备的Log污染已经相当严重，不仅app，还包括各种手机�
 	}
 这样，在用ProGuard优化时就会移除这两个调用  
 但是，问题又来了，这个移除虽然不会影响代码逻辑，但是会导致back trace时的代码行数和源码对不上。。对于本身就要混淆代码的同学来说，这个可能不是什么问题
+
+#####Timber
+[Timber](https://github.com/JakeWharton/timber)是一个简单好用的第三方log工具，用法很简单：  
+一般在`onCreate()`方法中进行初始配置  
+
+	if (BuildConfig.DEBUG) {
+		Timber.plant(new Timber.DebugTree());
+	}
+然后就可以随处使用了  
+
+	Timber.d("Downloading URL: %s", url);
+	try {
+  		// ...
+	} catch (IOException ioe) {
+  		Timber.e(ioe, "Bad things happened!");
+	}
+更高级的使用方法见[timber example](https://github.com/JakeWharton/timber/tree/master/timber-sample)
+个人比较倾向这个方案，缺点就是要集成这个lib
+
+***
+暂时想到的就这么多，有补充再加进来吧  
+参考链接：  
+[http://stackoverflow.com/a/2466662/1256285](http://stackoverflow.com/a/2466662/1256285)  
+[http://source.android.com/source/code-style.html#log-sparingly](http://source.android.com/source/code-style.html#log-sparingly)  
+
+-=EOF=-
