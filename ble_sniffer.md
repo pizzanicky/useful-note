@@ -24,6 +24,8 @@
 ##使用流程：  
 按**l**刷新列表，方向键选择感兴趣的设备，回车，按**w**启动Wireshark（初次启动会自动安装plugin），然后就可以在Wireshark查看抓包信息了。Wireshark可以把抓到的包分字段显示为可读的树形信息，在Bluetooth Low Energy Link Layer中可以看到。  
 
+##备注：
+这款嗅探器基本在3米之外就扫不到设备了，这个距离太短了。不知道商用探针产品是否也如此
 ###参考链接：
 [https://learn.adafruit.com/introducing-the-adafruit-bluefruit-le-sniffer/nordic-nrfsniffer](https://learn.adafruit.com/introducing-the-adafruit-bluefruit-le-sniffer/nordic-nrfsniffer)
 
