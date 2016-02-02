@@ -25,3 +25,34 @@ App多数属于这种情况，本地中心设备用`CBCentralManager`对象来�
 ####外设侧对象
 OS X v10.9及iOS6以上的设备可以已BLE外设的方式工作，这种情况下，则用`CBPeripheralManager`对象来表示外设，可以管理外设Service和Characteristic的发布，广播，以及响应中心设备的读写请求，对侧的中心设备用`CBCentral`表示。
 Service和Characteristic分别用`CBMutableService`和`CBMutableCharacteristic`来表示
+##执行中心侧任务
+###启动CBCentralManager
+创建CBCentralManager：  
+
+	myCentralManager =
+        [[CBCentralManager alloc] initWithDelegate:self queue:nil options:nil];
+
+这里`self`被设为接收中心事件的代理，分发queue设为`nil`，CBCentralManager会使用main queue来分发事件。  
+CBCentralManager创建时会调用其代理对象的[centralManagerDidUpdateState:](https://developer.apple.com/library/ios/documentation/CoreBluetooth/Reference/CBCentralManagerDelegate_Protocol/index.html#//apple_ref/occ/intfm/CBCentralManagerDelegate/centralManagerDidUpdateState:)方法，我们必须实现这个方法来确保当前设备支持BLE且可用
+###发现广播中的外设
+方法如下：
+
+	[myCentralManager scanForPeripheralsWithServices:nil options:nil];
+
+>**注意：**如果第一个参数设`nil`，CBCentralManager会返回所有发现的外设，无论它们都支持哪些服务。通常在正式app中，多是指定一个[CBUUID](https://developer.apple.com/library/ios/documentation/CoreBluetooth/Reference/CBUUID_Class/index.html#//apple_ref/occ/cl/CBUUID)数组，其中包含app真正感兴趣的那些服务的UUID
+
+上述方法调用后，代理对象每次发现一个外设，CBCentralManager都会调用[centralManager:didDiscoverPeripheral:advertisementData:RSSI:](https://developer.apple.com/library/ios/documentation/CoreBluetooth/Reference/CBCentralManagerDelegate_Protocol/index.html#//apple_ref/occ/intfm/CBCentralManagerDelegate/centralManager:didDiscoverPeripheral:advertisementData:RSSI:)。被发现的外设以[CBPeripheral](https://developer.apple.com/library/ios/documentation/CoreBluetooth/Reference/CBPeripheral_Class/index.html#//apple_ref/occ/cl/CBPeripheral)对象的方式返回，如下：
+
+	- (void)centralManager:(CBCentralManager *)central
+ 	didDiscoverPeripheral:(CBPeripheral *)peripheral
+    advertisementData:(NSDictionary *)advertisementData
+                  RSSI:(NSNumber *)RSSI {
+ 
+    	NSLog(@"Discovered %@", peripheral.name);
+    ...
+    
+找到感兴趣的外设后，为了省电，一般要停止扫描：
+
+	[myCentralManager stopScan];
+	
+>暂时用不到连接和获取Service，Characteristic，后面没看，以后看了再补
