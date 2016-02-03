@@ -4,3 +4,4 @@
 ###[Git学习](https://github.com/pizzanicky/useful-note/blob/master/git_learning_notes.md)
 ###[Android Log污染](https://github.com/pizzanicky/useful-note/blob/master/android_log_pollution.md)
 ###[BLE嗅探器](https://github.com/pizzanicky/useful-note/blob/master/ble_sniffer.md)
+###[Core Bluetooth官方指南概要](https://github.com/pizzanicky/useful-note/blob/master/core_bt_program_guide_note.md)
