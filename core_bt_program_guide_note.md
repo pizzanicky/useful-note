@@ -56,3 +56,25 @@ CBCentralManager创建时会调用其代理对象的[centralManagerDidUpdateStat
 	[myCentralManager stopScan];
 	
 >暂时用不到连接和获取Service，Characteristic，后面没看，以后看了再补
+
+##关于Service，Characteristic和UUID
+###关系
+外设的Service和Characteristic用128位的蓝牙UUID来标识，在Core Bluetooth框架中用`CBUUID`对象来代表。为了使用方便，蓝牙SIG组织定义发布了一些常用UUID的16位缩短版本，比如，SIG把心率服务的16位UUID定义为`180D`，对应蓝牙4.0规范中定义的128位的0000180D-0000-1000-8000-00805F9B34FB。
+
+`CBUUID`类提供了一些便于app处理长UUID的简便方法，例如，访问心率服务时不用在代码中传入128位的UUID，而是调用`UUIDWithString`方法并传入该服务预定义的16位UUID：
+
+	CBUUID *heartRateServiceUUID = [CBUUID UUIDWithString: @"180D"];
+	
+创建`CBUUID`对象时，Core Bluetooth会自动帮我们补足128位UUID
+###创建自定义Service和Characteristic的UUID
+如果我们要用的Service和Characteristic不属于预定义的蓝牙UUID，就得用命令行工具`uuidgen`自己生成一个128位的UUID：
+
+	$ uuidgen
+	71DA3FD1-7E10-41C1-B16F-4430B506CDE7
+	
+##Core Bluetooth的后台处理
+默认情况下，Core Bluetooth的许多任务在app后台运行或挂起时是不能工作的，但通过把app声明为支持Core Bluetooth后台执行模式，可以允许将app从挂起状态唤醒，以处理一些蓝牙事件。如果app不需要完全运行于后台模式，也可以仅仅在重要事件发生时让系统通知app。
+
+不过，就算app支持了Core Bluetooth的全部后台执行模式，app也不能保证一直运行下去，在必要的时候，系统可能还是会为了前台app释放内存而干掉你的app。从iOS7开始，Core Bluetooth支持了保存中心或外设对象的状态信息，以及在app启动时恢复状态，如果要保证**蓝牙连接等长时间操作**，这个是不错的功能。
+###Core Bluetooth后台执行模式
+如果app要在后台执行蓝牙任务，必须在`Info.plist`文件中进行声明，系统会将app从挂起状态唤醒，来处理蓝牙事件。可声明的后台执行模式有两种：分别是作为中心设备和作为外设。做声明时添加`UIBackgroundModes`这个key即可
