@@ -78,3 +78,14 @@ CBCentralManager创建时会调用其代理对象的[centralManagerDidUpdateStat
 不过，就算app支持了Core Bluetooth的全部后台执行模式，app也不能保证一直运行下去，在必要的时候，系统可能还是会为了前台app释放内存而干掉你的app。从iOS7开始，Core Bluetooth支持了保存中心或外设对象的状态信息，以及在app启动时恢复状态，如果要保证**蓝牙连接等长时间操作**，这个是不错的功能。
 ###Core Bluetooth后台执行模式
 如果app要在后台执行蓝牙任务，必须在`Info.plist`文件中进行声明，系统会将app从挂起状态唤醒，来处理蓝牙事件。可声明的后台执行模式有两种：分别是作为中心设备和作为外设。做声明时添加`UIBackgroundModes`这个key即可
+
+##Best Practice
+###注意Radio的使用和电量消耗
+电量消耗不用说，BLE通讯要用到设备的radio模块，而其他的无线通讯可能都要用到设备的radio，比如WiFi，经典蓝牙，而且其他app也可能会使用BLE，调用[scanForPeripheralsWithServices:options:](https://developer.apple.com/library/ios/documentation/CoreBluetooth/Reference/CBCentralManager_Class/index.html#//apple_ref/occ/instm/CBCentralManager/scanForPeripheralsWithServices:options:)时，只要你不明确要求它停止，中心设备会一直使用radio来监听广告包，所以尽量最小化自己app对radio的使用
+####只在必要的情况下设置CBCentralManagerScanOptionAllowDuplicatesKey
+外设每秒钟可能会发出多个广告包来把自己的存在告知中心设备，用[scanForPeripheralsWithServices:options:](https://developer.apple.com/library/ios/documentation/CoreBluetooth/Reference/CBCentralManager_Class/index.html#//apple_ref/occ/instm/CBCentralManager/scanForPeripheralsWithServices:options:)方法扫描设备时，默认会把扫到的多个广告包合并为**单个发现事件**，也就是说，CBCentralManager每发现一个新外设，或者已发现外设的广告数据有变化才会调用一次[centralManager:didDiscoverPeripheral:advertisementData:RSSI](https://developer.apple.com/library/ios/documentation/CoreBluetooth/Reference/CBCentralManagerDelegate_Protocol/index.html#//apple_ref/occ/intfm/CBCentralManagerDelegate/centralManager:didDiscoverPeripheral:advertisementData:RSSI:)方法，和它收到多少个广告包**没有直接关系**。
+
+如果需要持续性地获得变化的RSSI，可以在调用扫描方法时把[CBCentralManagerScanOptionAllowDuplicatesKey](https://developer.apple.com/library/ios/documentation/CoreBluetooth/Reference/CBCentralManager_Class/index.html#//apple_ref/c/data/CBCentralManagerScanOptionAllowDuplicatesKey)设为`YES`，这样会去除重复广告包的过滤，每次从外设收到广告包都会产生一个发现事件。当然，这样做对耗电量和性能会有一定影响。
+
+>用蓝牙做定位时可能需要设置此KEY
+
