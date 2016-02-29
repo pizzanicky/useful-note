@@ -5,3 +5,4 @@
 ###[Android Log污染](https://github.com/pizzanicky/useful-note/blob/master/android_log_pollution.md)
 ###[BLE嗅探器](https://github.com/pizzanicky/useful-note/blob/master/ble_sniffer.md)
 ###[Core Bluetooth官方指南概要](https://github.com/pizzanicky/useful-note/blob/master/core_bt_program_guide_note.md)
+###[Bluetooth Low Energy笔记](https://github.com/pizzanicky/useful-note/blob/master/ble_note.md)
