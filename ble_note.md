@@ -49,7 +49,27 @@ iBeacon广播由4部分组成：proximity UUID，Major，Minor，TX信号强度
 ####BLE广播数据格式
 ![pic](http://www.havlena.net/wp-content/uploads/ibeacon-packet.png)
 
+##iOS
+iOS可以通过CoreBluetooth和CoreLocation两种方式访问iBeacon。CoreBluetooth上面基本上概括了，下面记录的是CoreLocation的要点
 
+###Region Monitoring
+区域监视是CoreLocation Framework中的一部分，本身还分为基于地理位置和基于iBeacon的区域监视
+
+以下是会导致区域监视不可用的原因：
+
+* 设备硬件不支持
+* 用户没有授权APP进行区域监视
+* 用户在设置中关闭了定位服务
+* 用户关闭了设备或APP的后台数据刷新
+* 设备处于飞行模式，无法使用某些硬件
+
+从iOS7开始，使用本功能前要记得调用`CLLocationManager`的[isMonitoringAvailableForClass:](https://developer.apple.com/library/prerelease/ios/documentation/CoreLocation/Reference/CLLocationManager_Class/index.html#//apple_ref/occ/clm/CLLocationManager/isMonitoringAvailableForClass:)方法和[authorizationStatus](https://developer.apple.com/library/prerelease/ios/documentation/CoreLocation/Reference/CLLocationManager_Class/index.html#//apple_ref/occ/clm/CLLocationManager/authorizationStatus)方法
+
+`isMonitoringAvailableForClass:`方法会告诉你底层硬件是否支持，如果返回`YES`，则再调用`authorizationStatus`方法查询APP是否获准使用定位服务，如果返回结果是`kCLAuthorizationStatusAuthorized`，则设备进出注册区域时会收到越界通知，否则app收不到通知
+
+**注意：**APP未被授权使用区域监视，不会妨碍APP对区域进行注册，这样如果用户后来通过了授权，app就自然能够收到越界通知了。另外，如果想在app未获授权试移除注册的区域，可以用`locationManager:didChangeAuthorizationStatus:`代理方法来获取授权状态的变化，然后合理移除注册区域
+
+每个Beacon区域是用proximity UUID, Major, Minor来标识
 
 ##Android
 ###Android权限
@@ -171,7 +191,11 @@ ScanFilter支持：
 
 注意：同时只能扫描传统蓝牙和BLE中的一种，不能同时扫描
 
+###Android Beacon Library
+[这个Library](http://altbeacon.github.io/android-beacon-library/)可以让Android设备像iOS设备一样使用beacon，比如扫描到一个或多个beacon时app可以收到通知，以大约每秒一次的频率获得距离的更新等。要注意的是这个库默认兼容的是开放标准的[AltBeacon](http://altbeacon.org/)，如果需要扫描iBeacon或者其他beacon需要对其[BeaconParser类](http://altbeacon.github.io/android-beacon-library/javadoc/org/altbeacon/beacon/BeaconParser.html)进行layout适配，参见[这个例子](http://stackoverflow.com/questions/25027983/is-this-the-correct-layout-to-detect-ibeacons-with-altbeacons-android-beacon-li)
+
 ##参考链接
 [http://developer.android.com/guide/topics/connectivity/bluetooth-le.html](http://developer.android.com/guide/topics/connectivity/bluetooth-le.html)  
 [https://developer.apple.com/library/ios/documentation/NetworkingInternetWeb/Conceptual/CoreBluetooth_concepts/AboutCoreBluetooth/Introduction.html#//apple_ref/doc/uid/TP40013257-CH1-SW1](https://developer.apple.com/library/ios/documentation/NetworkingInternetWeb/Conceptual/CoreBluetooth_concepts/AboutCoreBluetooth/Introduction.html#//apple_ref/doc/uid/TP40013257-CH1-SW1)  
 [BLE Beacons: iBeacon, AltBeacon, URIBeacon and derivatives](http://austinblackstoneengineering.com/ble-beacons-ibeacon-altbeacon-uribeacon-and-derivatives/)  
+[Android Beacon Library](http://altbeacon.github.io/android-beacon-library/)
