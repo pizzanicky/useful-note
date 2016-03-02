@@ -69,7 +69,35 @@ iOS可以通过CoreBluetooth和CoreLocation两种方式访问iBeacon。CoreBluet
 
 **注意：**APP未被授权使用区域监视，不会妨碍APP对区域进行注册，这样如果用户后来通过了授权，app就自然能够收到越界通知了。另外，如果想在app未获授权试移除注册的区域，可以用`locationManager:didChangeAuthorizationStatus:`代理方法来获取授权状态的变化，然后合理移除注册区域
 
-每个Beacon区域是用proximity UUID, Major, Minor来标识
+每个Beacon区域是用proximity UUID, Major, Minor来标识，其中Major和Minor不是必须的
+
+创建并注册一个beacon区域：
+
+```
+- (void)registerBeaconRegionWithUUID:(NSUUID *)proximityUUID andIdentifier:(NSString*)identifier {
+ 
+   // Create the beacon region to be monitored.
+   CLBeaconRegion *beaconRegion = [[CLBeaconRegion alloc]
+      initWithProximityUUID:proximityUUID
+                 identifier:identifier];
+ 
+   // Register the beacon region with the location manager.
+   [self.locManager startMonitoringForRegion:beaconRegion];
+}
+```
+
+注册成功之后立即生效，设备一旦发现该beacon，系统就会给app生成一个区域事件
+
+###Beacon区域越界的处理
+用户进入beacon区域，location manager调用`locationManager:didEnterRegion:`，离开区域时调用`locationManager:didExitRegion:`
+
+设置[notifyOnEntry](https://developer.apple.com/library/prerelease/ios/documentation/CoreLocation/Reference/CLRegion_class/index.html#//apple_ref/occ/instp/CLRegion/notifyOnEntry)和[notifyOnExit](https://developer.apple.com/library/prerelease/ios/documentation/CoreLocation/Reference/CLRegion_class/index.html#//apple_ref/occ/instp/CLRegion/notifyOnExit)这两个属性可以指定app响应哪种越界信息，默认均为`YES`
+
+也可以设置设备亮屏时才提醒用户，把[notifyEntryStateOnDisplay](https://developer.apple.com/library/prerelease/ios/documentation/CoreLocation/Reference/CLBeaconRegion_class/index.html#//apple_ref/occ/instp/CLBeaconRegion/notifyEntryStateOnDisplay)设为`YES`，同时把`notifyOnEntry`设为`NO`即可
+
+###Beacon的距离
+
+当用户设备已经处于一个区域中时，app可以使用[startRangingBeaconsInRegion:](https://developer.apple.com/library/prerelease/ios/documentation/CoreLocation/Reference/CLLocationManager_Class/index.html#//apple_ref/occ/instm/CLLocationManager/startRangingBeaconsInRegion:)方法，Location manager会在beacon距离发生变化时调用[locationManager:didRangeBeacons:inRegion:](https://developer.apple.com/library/prerelease/ios/documentation/CoreLocation/Reference/CLLocationManagerDelegate_Protocol/index.html#//apple_ref/occ/intfm/CLLocationManagerDelegate/locationManager:didRangeBeacons:inRegion:)来通知app，这个代理方法会返回一个当前在区域中的beacon的`CLBeacon`对象数组，这个数组按照距离排序，最近的beacon在最前。
 
 ##Android
 ###Android权限
