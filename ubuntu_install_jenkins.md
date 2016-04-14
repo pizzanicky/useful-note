@@ -9,11 +9,14 @@
 
 装好后Jenkins就能开机自启动，启动脚本在`/etc/init.d/jenkins`
 
+
 当然也可以手动启停：
 
 	sudo /etc/init.d/jenkins start
 	sudo /etc/init.d/jenkins stop
 	
+**注意：**官方建议安装openjdk-7-jre和openjdk-7-jdk，老版本Ubuntu自带的GCJ会有[问题](https://issues.jenkins-ci.org/browse/JENKINS-743)。不过我装的SUN JDK1.6，暂时没遇到问题
+
 Log文件在这里：`/var/log/jenkins/jenkins.log`
 
 默认配置参数在这里：`/etc/default/jenkins`
