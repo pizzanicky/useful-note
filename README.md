@@ -9,3 +9,4 @@
 ###[三角定位](https://github.com/pizzanicky/useful-note/blob/master/triangulation.md)
 ###[Android的GPU过度绘制](https://github.com/pizzanicky/useful-note/blob/master/android_gpu_overdraw.md)
 ###[Ubuntu14.04安装Jenkins](https://github.com/pizzanicky/useful-note/blob/master/ubuntu_install_jenkins.md)
+###[Jenkins安全配置笔记](https://github.com/pizzanicky/useful-note/blob/master/jenkins_security_note.md)
